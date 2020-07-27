@@ -5,6 +5,7 @@ This repository is a collection of reinforcement learning algorithms, as taught 
 
 A robot starts at S and has to arrive at G with the minimum number of steps. After each step that it takes, which can be left, down, up and right, wind pushes the robot up by the number of steps indicated below the grid.
 
+```
 [[0. 0. 0. 0. 0. 1. 1. 1. 1. 1.]
  [0. 0. 0. 0. 1. 0. 0. 0. 0. 1.]
  [0. 0. 0. 1. 0. 0. 0. 0. 0. 1.]
@@ -13,6 +14,7 @@ A robot starts at S and has to arrive at G with the minimum number of steps. Aft
  [0. 0. 0. 0. 0. 0. 0. 0. 1. 1.]
  [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]]
   0  0  0  1  1  1  2  2  1  0  ----> wind that blows up
+```
  
  Example output of './windy-gridworld.py':
 ```
