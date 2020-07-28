@@ -136,5 +136,6 @@ class walker:
         self.pos  = np.copy(self.newpos)
         self.act  = np.copy(self.newact)
 
-bot = walker(1, 0.9, 0.4)
+#    def __init__(self, alpha, lamb, gamma):
+bot = walker(0.4, 0.9, 1)
 bot.run()
