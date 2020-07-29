@@ -2,8 +2,8 @@
 #include <random>
 #include <algorithm>
  
-#define K 	100
-#define alpha 	0.4
+#define K 	10000
+#define alpha 	0.6
 #define lambda 	0.9
 #define gamma 	1
 
@@ -97,7 +97,7 @@ struct walker{
             n_steps = 0;
 
             // set epsilon for exploration
-            epsi = static_cast<float>(1/(k + 1));
+            epsi = 1.0/(k*1.0 + 1.0);
 
             // initialize eligilibily = 0 for all s,a
             wipe_eligibility();
@@ -114,6 +114,7 @@ struct walker{
             //for(int i=0; i!=100; i++){
                 n_steps++;
                 take_action();
+                wind();
                 choose_action();
 
                 elig[pos[0]][pos[1]][act]++;
