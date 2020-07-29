@@ -1,11 +1,15 @@
 #include <iostream>
- 
-using namespace std;
+#include <random>
  
 #define K 	100
 #define alpha 	0.4
 #define lambda 	0.9
 #define gamma 	1
+
+using namespace std;
+mt19937 rnd;
+uniform_real_distribution<double> uniform_dist_double{0., 1.};
+uniform_int_distribution<> uniform_dist_int{0, 3};
 
 struct walker{
     int pos[2] = {0, 3};
@@ -54,19 +58,24 @@ struct walker{
         return new_estimate - old_estimate;
     }
 
-    void choose_action(){
-
+    inline double get_rdouble(){
+        return uniform_dist_double(rnd);
     }
+
+    inline int get_rint(){
+        return uniform_dist_int(rnd);
+    }
+
+    void choose_action(){
+        newact = get_rint();
+    }
+
 
 };
 
 int main(){
     walker bot;
 
-    cout << bot.newpos[0] << bot.newpos[1] << endl;
-    bot.take_action();
-    cout << bot.newpos[0] << bot.newpos[1] << endl;
-    bot.wind();
-    cout << bot.newpos[0] << bot.newpos[1] << endl;
-    cout << bot.delta() << endl;
+    cout << bot.newact << endl;
+    bot.choose_action();
 }
