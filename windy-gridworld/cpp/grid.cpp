@@ -20,8 +20,16 @@ struct walker{
 
     float moves[4][2] = {{0, -1}, {1, 0}, {-1, 0}, {0, 1}};
     float elig[7][10][4];
-    float value[7][10][4];
+    float value[7][10][4] = {0};
     float epsi;
+    float delta;
+
+    void wipe_eligibility(){
+        for(int l = 0; l != 7; l++)
+            for(int m = 0; m != 10; m++)
+                for(int n = 0; n != 5; n++)
+                    elig[l][m][n] = 0;
+    }
 
     void is_inside(){
         if(newpos[0] < 0 || newpos[0] > 6)
@@ -31,7 +39,7 @@ struct walker{
     }
 
     bool terminated(){
-        if(pos[0] == 3 || pos[1] == 7)
+        if(pos[0] == 3 && pos[1] == 7)
             return true;
         return false;
     }
@@ -53,10 +61,10 @@ struct walker{
         is_inside();
     }
 
-    float delta(){
+    void calc_delta(){
         float new_estimate = -1 + gamma * value[newpos[0]][newpos[1]][newact];
         float old_estimate = value[pos[0]][pos[1]][act];
-        return new_estimate - old_estimate;
+        delta = new_estimate - old_estimate;
     }
 
     inline double get_rdouble(){
@@ -71,48 +79,57 @@ struct walker{
         if(get_rdouble() > epsi){
             int i = newpos[0], j = newpos[1];
             newact = distance(value[i][j], max_element(value[i][j], value[i][j] + 4));
-            cout << "greedy" << endl;
+            //cout << "greedy" << endl;
         } else {
             newact = get_rint();
-            cout << "random" << endl;
+            //cout << "random" << endl;
         }
     }
 
     void run(){
 
-        // initialize Q(s, a) arbitrarily
-        value = {0}; 
+        // initialize Q(s, a) arbitrarily, already done at declaration
 
-        for(int k = 0; k != 100; k++){ // for each episode
+        for(int k = 0; k != 1; k++){ // for each episode
+
+            // set epsilon for exploration
+            epsi = 0.1;
 
             // initialize eligilibily = 0 for all s,a
-            elig = {0};
+            wipe_eligibility();
 
             // initialize state S
-            pos = {0, 3}; 
+            pos[0] = 3; 
+            pos[1] = 0; 
 
             // initialize action A
             int i = pos[0], j = pos[1];
             act = distance(value[i][j], max_element(value[i][j], value[i][j] + 4)); 
             
-            //while !terminated(){
+            while (!terminated()) { // for each step
+            //for(int i=0; i!=100; i++){
+                take_action();
+                choose_action();
 
-            //}
+                elig[pos[0]][pos[1]][act]++;
+
+                calc_delta();
+
+                for(int l = 0; l != 7; l++)
+                    for(int m = 0; m != 10; m++)
+                        for(int n = 0; n != 4; n++){
+                            value[l][m][n] += alpha * delta * elig[l][m][n];
+                            elig[l][m][n] *= gamma * lambda;
+                        }
+
+                pos[0] = newpos[0]; 
+                pos[1] = newpos[1]; 
+                act = newact;
+
+                cout << pos[0] << pos[1] << endl;
+            }
         }
     }
-
-
-
-    //int pos[2] = {0, 3};
-    //int newpos[2] = {0, 3};
-    //unsigned act = 2;
-    //unsigned newact = 2;
-
-    //float moves[4][2] = {{0, -1}, {1, 0}, {-1, 0}, {0, 1}};
-    //float elig[7][10][4] = {0};
-    //float value[7][10][4] = {0};
-    //float epsi = 0.5;
-
 };
 
 int main(){
