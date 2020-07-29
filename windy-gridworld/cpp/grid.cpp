@@ -19,9 +19,10 @@ struct walker{
     unsigned newact;
 
     float moves[4][2] = {{0, -1}, {1, 0}, {-1, 0}, {0, 1}};
-    float elig[7][10][4];
+
     float value[7][10][4] = {0};
-    float epsi;
+    float  elig[7][10][4];
+    double epsi;
     float delta;
 
     void wipe_eligibility(){
@@ -89,11 +90,14 @@ struct walker{
     void run(){
 
         // initialize Q(s, a) arbitrarily, already done at declaration
+        int n_steps;
 
-        for(int k = 0; k != 1; k++){ // for each episode
+        for(int k = 0; k != K; k++){ // for each episode
+
+            n_steps = 0;
 
             // set epsilon for exploration
-            epsi = 0.1;
+            epsi = static_cast<float>(1/(k + 1));
 
             // initialize eligilibily = 0 for all s,a
             wipe_eligibility();
@@ -108,6 +112,7 @@ struct walker{
             
             while (!terminated()) { // for each step
             //for(int i=0; i!=100; i++){
+                n_steps++;
                 take_action();
                 choose_action();
 
@@ -126,8 +131,10 @@ struct walker{
                 pos[1] = newpos[1]; 
                 act = newact;
 
-                cout << pos[0] << pos[1] << endl;
+                if(k == K - 1)
+                    cout << "pos: " << pos[0] << pos[1] << endl;
             }
+            cout << n_steps << " " << epsi << endl;
         }
     }
 };
