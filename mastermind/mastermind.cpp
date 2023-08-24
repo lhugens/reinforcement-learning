@@ -10,13 +10,17 @@ void print(std::vector<int>& b){
     std::cout << std::endl;
 }
 
-bool int_in(int i, std::vector<int>& v){
-    for(auto& x: v){
-        if(i == x){
-            return true;
-        }
-    }
-    return false;
+//bool int_in(int i, std::vector<int>& v){
+//    for(auto& x: v){
+//        if(i == x){
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+bool int_in(int i, const std::vector<int>& v) {
+    return std::find(v.begin(), v.end(), i) != v.end();
 }
 
 struct MasterMind
@@ -26,19 +30,18 @@ struct MasterMind
     std::vector<int> board_correct;
     std::vector<int> evaluation;
     std::vector<int> used;
-    int gc;
+    int dim;
     int no_colors;
 
 
-    MasterMind(unsigned d, unsigned n) : gc(d), no_colors(n)
+    MasterMind(unsigned d, unsigned n) : dim(d), no_colors(n)
     {
         srand((unsigned) time(0));
 
-        board.resize(gc, 0);
-        board_correct.resize(gc, 0);
-        evaluation.resize(gc, 0);
+        board.resize(dim, 0);
+        board_correct.resize(dim, 0);
 
-        for(int i=0; i<gc; i++){
+        for(int i=0; i<dim; i++){
             board[i] = randint();
             board_correct[i] = randint();
         }
@@ -51,30 +54,25 @@ struct MasterMind
     }
 
     void eval(){
-        int p = 0;
+        std::vector<int> used_i;
+        std::vector<int> used_j;
 
-        for(int i=0; i<gc; i++){
-            if(board[i] == board_correct[i]){
-                std::cout << "pretas i=" << i << " j=" << i << std::endl;
-                evaluation[p] = 2;
-                p++;
-                used.push_back(i);
-            }
-        }
-
-        for(int i=0; i<gc; i++){
-            for(int j=0; j<gc && i!=j; j++){
-                bool cenas = (board[i]==board_correct[j]);
-                std::cout << "i=" << i << " j=" << j << " " << cenas << std::endl;
-                print(used);
-                if(board[i]==board_correct[j] && !int_in(i, used)){
+        for(int i=0; i<dim; i++){
+            for(int j=0; j<dim; j++){
+                if(i==j && !int_in(i, used_i) && !int_in(j, used_j) && board[i]==board_correct[j]){
+                    evaluation.push_back(2);
+                    used_i.push_back(i);
+                    used_j.push_back(j);
+                    std::cout << "pretas i=" << i << " j=" << j << std::endl;
+                } else if(i!=j && !int_in(i, used_i) && !int_in(j, used_j) && board[i]==board_correct[j]){
+                    evaluation.push_back(1);
+                    used_i.push_back(i);
+                    used_j.push_back(j);
                     std::cout << "brancas i=" << i << " j=" << j << std::endl;
-                    evaluation[p] = 1;
-                    p++;
-                    used.push_back(i);
                 }
             }
         }
+
     }
 
     int randint(){
