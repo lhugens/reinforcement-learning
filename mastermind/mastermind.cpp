@@ -10,18 +10,18 @@ void print(std::vector<int>& b){
     std::cout << std::endl;
 }
 
-//bool int_in(int i, std::vector<int>& v){
-//    for(auto& x: v){
-//        if(i == x){
-//            return true;
-//        }
-//    }
-//    return false;
-//}
-
-bool int_in(int i, const std::vector<int>& v) {
-    return std::find(v.begin(), v.end(), i) != v.end();
+bool int_in(int i, std::vector<int>& v){
+    for(auto& x: v){
+        if(i == x){
+            return true;
+        }
+    }
+    return false;
 }
+
+//bool int_in(int i, const std::vector<int>& v) {
+//    return std::find(v.begin(), v.end(), i) != v.end();
+//}
 
 struct MasterMind
 {
@@ -42,14 +42,16 @@ struct MasterMind
         board_correct.resize(dim, 0);
 
         for(int i=0; i<dim; i++){
-            board[i] = randint();
-            board_correct[i] = randint();
+            board[i] = 1 + randint();
+            board_correct[i] = 1 + randint();
         }
 
         print_board();
         print_board_correct();
-
+        std::cout << std::endl;
         eval();
+        std::cout << std::endl;
+        print_board_correct();
         print_evaluation();
     }
 
@@ -59,20 +61,25 @@ struct MasterMind
 
         for(int i=0; i<dim; i++){
             for(int j=0; j<dim; j++){
-                if(i==j && !int_in(i, used_i) && !int_in(j, used_j) && board[i]==board_correct[j]){
+                std::cout << "i=" << i << "    " << board[i] << "    j=" << j << "    " << board_correct[j] << std::endl;
+                if(i==j && board[i]==board_correct[j] && !int_in(i, used_i) && !int_in(j, used_j)){
+                    std::cout << "score 2" << std::endl;
+                    board_correct[j] = 0;
                     evaluation.push_back(2);
                     used_i.push_back(i);
                     used_j.push_back(j);
-                    std::cout << "pretas i=" << i << " j=" << j << std::endl;
-                } else if(i!=j && !int_in(i, used_i) && !int_in(j, used_j) && board[i]==board_correct[j]){
+                    continue;
+                } else if(i!=j && board[i]==board_correct[j] && board[j]!=board_correct[j] && !int_in(i, used_i) && !int_in(j, used_j)){
+                    std::cout << "score 1" << std::endl;
                     evaluation.push_back(1);
+                    board_correct[j] = 0;
                     used_i.push_back(i);
                     used_j.push_back(j);
-                    std::cout << "brancas i=" << i << " j=" << j << std::endl;
+                    continue;
                 }
             }
+            continue;
         }
-
     }
 
     int randint(){
